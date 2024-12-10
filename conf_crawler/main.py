@@ -59,21 +59,62 @@ def crawl_journal(url:str) -> list:
     except requests.exceptions.RequestException as e:
         print(f"Error accessing {url}: {e}")
         return []
+    
+def crawl_paper_conf(url:str) -> list:
+    try:
+        paper_links = []
+        response = requests.get(url)
+        response.raise_for_status()
+        soup = BeautifulSoup(response.text, 'html.parser')
+        
+        # logging.info(soup.prettify())
+        
+        scholar_links = soup.find_all('a', href=lambda href: href and "https://scholar.google.com/scholar?q=" in href)
+        for scholar_link in scholar_links:
+            paper_links.append(scholar_link.get("href"))
+            logging.info(scholar_link.get("href"))
+        
+        return paper_links
+        
+    except requests.exceptions.RequestException as e:
+        print(f"Error accessing {url}: {e}")
+        return []
+
+def crawl_paper_journal(url:str) -> list:
+    try:
+        paper_links = []
+        response = requests.get(url)
+        response.raise_for_status()
+        soup = BeautifulSoup(response.text, 'html.parser')
+        
+        # logging.info(soup.prettify())
+        
+        scholar_links = soup.find_all('a', href=lambda href: href and "https://scholar.google.com/scholar?q=" in href)
+        for scholar_link in scholar_links:
+            paper_links.append(scholar_link.get("href"))
+            logging.info(scholar_link.get("href"))
+        
+        return paper_links
+        
+    except requests.exceptions.RequestException as e:
+        print(f"Error accessing {url}: {e}")
+        return []
 
 def main():
     logging.info("---Conference Cralwer---")
     
-    all_link = []
+    paper_links = []
     for conf in CONF_LISTS:
         if 'conf' in conf:
-            all_link += crawl_conferences(conf)
+            conf_links = crawl_conferences(conf)
+            for link in conf_links:
+                paper_links += crawl_paper_conf(link)
         else:
-            all_link += crawl_journal(conf)
-        
-    all_link = set(all_link)
-    # logging.info(all_link)
-    
-    
+            conf_links = crawl_journal(conf)
+            for link in conf_links:
+                paper_link += crawl_paper_journal(link)
+            
+    paper_link = set(paper_link)
 
 if __name__ == "__main__":
     main()
