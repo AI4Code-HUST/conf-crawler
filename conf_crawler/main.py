@@ -9,7 +9,7 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(funcName)s:%(lineno)d - %(message)s',
     handlers=[
-        logging.FileHandler("./logs/connect_to_gmail.log"),  # Log to a file
+        logging.FileHandler("./logs/main.log"),  # Log to a file
         logging.StreamHandler()  # Log to the console
     ]
 )
