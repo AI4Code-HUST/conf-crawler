@@ -5,6 +5,7 @@ import json
 from bs4 import BeautifulSoup
 from .constants import CONF_LISTS
 from urllib.parse import unquote
+from tqdm import tqdm
 
 # Configure logging to both a file and the console
 if not os.path.exists("./logs"):
@@ -146,7 +147,7 @@ def main():
     logging.info("---Conference Cralwer---")
     
     papers = []
-    for conf in CONF_LISTS:
+    for conf in tqdm(CONF_LISTS, desc="Processing configurations"):
         if 'conf' in conf:
             conf_links = crawl_conferences(conf)
             for link in conf_links:
@@ -178,7 +179,7 @@ def main():
                     # logging.info(paper_metadata)
                     papers.append(paper_metadata)
             
-    dump_jsonl(papers, "output.json")
+    dump_jsonl(papers, "output.jsonl")
 
 if __name__ == "__main__":
     main()
