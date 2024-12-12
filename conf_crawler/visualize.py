@@ -1,4 +1,5 @@
 import json
+import re
 
 def load_jsonl(file_path):
     """
@@ -20,37 +21,58 @@ def load_jsonl(file_path):
                 print(f"Error decoding JSON on line: {line.strip()} - {e}")
     return data
 
-def write_markdown(data, output_file):
+def generate_markdown_table(data):
     """
-    Writes data into a Markdown table format.
+    Generates a Markdown table for the given data.
 
     Args:
         data (list): A list of dictionaries containing paper information.
-        output_file (str): The path to the output Markdown file.
+
+    Returns:
+        str: A Markdown table as a string.
+    """
+    table = ["| Conference | Paper Title | Keywords |", "|------------|-------------|----------|"]
+
+    for paper in data:
+        conference = paper.get("conference", paper.get("journal"))
+        title = paper.get("paper", "N/A")
+        reasons = "; ".join([", ".join(reason) for reason in paper.get("reasons", [])])
+        paper_url = paper.get("paper_url", "#")
+
+        table.append(f"| {conference} | [{title}]({paper_url}) | {reasons} |")
+
+    return "\n".join(table)
+
+def update_readme_section(readme_path, section_title, new_content):
+    """
+    Updates a specific section in the README.md file.
+
+    Args:
+        readme_path (str): The path to the README.md file.
+        section_title (str): The title of the section to update.
+        new_content (str): The new content to replace in the section.
 
     Returns:
         None
     """
-    with open(output_file, 'w', encoding='utf-8') as file:
-        # Write the header
-        file.write("| Conference | Paper Title | Keywords |\n")
-        file.write("|------------|-------------|----------|\n")
+    with open(readme_path, 'r', encoding='utf-8') as file:
+        readme_content = file.read()
 
-        # Write each paper as a row
-        for paper in data:
-            conference = paper.get("conference", paper.get("journal"))
-            title = paper.get("paper", "N/A")
-            reasons = "; ".join([", ".join(reason) for reason in paper.get("reasons", [])])
-            paper_url = paper.get("paper_url", "#")
+    section_pattern = rf"(?<=## {section_title}\n)(.*?)(?=\n## |\Z)"
+    updated_content = re.sub(section_pattern, new_content, readme_content, flags=re.S)
 
-            file.write(f"| {conference} | [{title}]({paper_url}) | {reasons} |\n")
+    with open(readme_path, 'w', encoding='utf-8') as file:
+        file.write(updated_content)
 
 if __name__ == "__main__":
     # Load the JSONL data
-    input_file = "filtered-output.jsonl"
-    output_file = "filtered-papers.md"
+    input_file = "./outputs/filtered-papers.jsonl"
+    readme_file = "./README.md"
 
     data = load_jsonl(input_file)
-    
-    # Write to Markdown
-    write_markdown(data, output_file)
+
+    # Generate the new Markdown table
+    markdown_table = generate_markdown_table(data)
+
+    # Update the ## Papers section in the README
+    update_readme_section(readme_file, "Papers", markdown_table)

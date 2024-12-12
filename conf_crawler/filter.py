@@ -1,8 +1,7 @@
 import logging
 import os
-import re
 import json
-from tqdm import tqdm
+from constants import KEYWORDS, YEARS
 
 # Configure logging to both a file and the console
 if not os.path.exists("./logs"):
@@ -55,34 +54,19 @@ def load_jsonl(file_path):
     return data
 
 def main():
-    logging.info("Postprocess")
+    logging.info("Filter")
     
-    papers = load_jsonl("output.jsonl")
+    papers = load_jsonl("./outputs/papers.jsonl")
     logging.info(len(papers))
     
     filtered_papers = []
-    set_keywords = [
-        [
-            "large language model",
-            "language model",
-            "llm",
-            "agent"
-        ],
-        [
-            "static analysis",
-            "static analyzer",
-            "static",
-            "codeql"
-        ]
-    ]
-    years = ["2024", "2023"]
 
     for paper in papers:
         paper_text = paper["paper"].lower()
         matched_set = None
         reasons = []
 
-        for keywords in set_keywords:
+        for keywords in KEYWORDS:
             matched_keywords = [keyword for keyword in keywords if keyword in paper_text]
             if matched_keywords:
                 matched_set = keywords
@@ -95,7 +79,7 @@ def main():
             
     second_filtered_papers = []
     for paper in filtered_papers:
-        for year in years:
+        for year in YEARS:
             if "conference" in paper:
                 if year in paper["conference"]:
                     second_filtered_papers.append(paper)
@@ -103,7 +87,7 @@ def main():
                 if year in paper["volume"]:
                     second_filtered_papers.append(paper)
 
-    dump_jsonl(second_filtered_papers, "filtered-output.jsonl")
+    dump_jsonl(second_filtered_papers, "./outputs/filtered-papers.jsonl")
 
 if __name__ == "__main__":
     main()

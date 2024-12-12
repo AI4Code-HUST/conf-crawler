@@ -32,3 +32,18 @@ CONF_LISTS = [
     "http://dblp.uni-trier.de/db/journals/stvr",
     "http://dblp.uni-trier.de/db/journals/spe/"
 ]
+KEYWORDS = [
+    [
+        "large language model",
+        "language model",
+        "llm",
+        "agent"
+    ],
+    [
+        "static analysis",
+        "static analyzer",
+        "static",
+        "codeql"
+    ]
+]
+YEARS = ["2024", "2023"]

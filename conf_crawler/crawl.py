@@ -142,16 +142,50 @@ def dump_jsonl(data, file_path):
         for item in data:
             # Write each dictionary as a JSON object on a new line
             file.write(json.dumps(item, ensure_ascii=False) + '\n')
+            
+def load_jsonl(file_path):
+    """
+    Loads data from a JSONL file, where each line is a valid JSON object.
+
+    Args:
+        file_path (str): The path to the JSONL file to be read.
+
+    Returns:
+        list: A list of dictionaries containing the parsed JSON objects.
+    """
+    data = []
+    with open(file_path, 'r', encoding='utf-8') as file:
+        for line in file:
+            try:
+                # Parse the line as a JSON object and append to the list
+                data.append(json.loads(line.strip()))
+            except json.JSONDecodeError as e:
+                print(f"Error decoding JSON on line: {line.strip()} - {e}")
+    return data
 
 def main():
     logging.info("---Conference Cralwer---")
     
     papers = []
-    for conf in tqdm(CONF_LISTS, desc="Processing configurations"):
+    crawled_confs_jours = []
+    output_path = "./outputs/papers.jsonl"
+    crawled_confs_jours_path = "./outputs/crawled-conferences.jsonl"
+    if os.path.exists(output_path):
+        papers = load_jsonl(output_path)
+        
+    if os.path.exists(crawled_confs_jours_path):
+        crawled_confs_jours = load_jsonl(crawled_confs_jours_path)
+        
+    for conf in CONF_LISTS:
         if 'conf' in conf:
             conf_links = crawl_conferences(conf)
             for link in conf_links:
-                # logging.info(link)
+                logging.info(link)
+                if link in crawled_confs_jours:
+                    logging.info("Skipped")
+                    continue
+                crawled_confs_jours.append(link)
+                
                 conf_name = extract_conf_acronym_and_year(link)
                 paper_links = crawl_paper_conf(link)
                 for paper in paper_links:
@@ -166,6 +200,12 @@ def main():
         else:
             conf_links = crawl_journal(conf)
             for link in conf_links:
+                logging.info(link)
+                if link["journal_url"] in crawled_confs_jours:
+                    logging.info("Skipped")
+                    continue
+                crawled_confs_jours.append(link["journal_url"])
+                
                 paper_links = crawl_paper_journal(link["journal_url"])
                 for paper in paper_links:
                     title = extract_title_from_scholar_link(paper)
@@ -179,7 +219,8 @@ def main():
                     # logging.info(paper_metadata)
                     papers.append(paper_metadata)
             
-    dump_jsonl(papers, "output.jsonl")
+    dump_jsonl(papers, output_path)
+    dump_jsonl(crawled_confs_jours, crawled_confs_jours_path)
 
 if __name__ == "__main__":
     main()

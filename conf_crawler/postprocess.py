@@ -64,22 +64,21 @@ def contains_numberth(string):
 def main():
     logging.info("Postprocess")
     
-    papers = load_jsonl("output.jsonl")
+    papers = load_jsonl("./outputs/papers.jsonl")
     logging.info(len(papers))
     
-    for paper in papers:
+    for paper in tqdm(papers):
         if paper["paper"] == '':
             papers.remove(paper)
             continue
         if contains_numberth(paper["paper"]):
-            logging.info(paper)
             papers.remove(paper)
             continue
         if 'acm' in paper["paper"].lower() or 'ieee' in paper["paper"].lower():
             papers.remove(paper)
             continue
             
-    dump_jsonl(papers, "postprocessed-output.jsonl")
+    dump_jsonl(papers, "./outputs/postprocessed-papers.jsonl")
 
 if __name__ == "__main__":
     main()
