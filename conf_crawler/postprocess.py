@@ -2,7 +2,6 @@ import logging
 import os
 import re
 import json
-from tqdm import tqdm
 
 # Configure logging to both a file and the console
 if not os.path.exists("./logs"):
@@ -67,7 +66,7 @@ def main():
     papers = load_jsonl("./outputs/papers.jsonl")
     logging.info(len(papers))
     
-    for paper in tqdm(papers):
+    for paper in papers:
         if paper["paper"] == '':
             papers.remove(paper)
             continue

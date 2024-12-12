@@ -5,7 +5,6 @@ import json
 from bs4 import BeautifulSoup
 from .constants import CONF_LISTS
 from urllib.parse import unquote
-from tqdm import tqdm
 
 # Configure logging to both a file and the console
 if not os.path.exists("./logs"):
