@@ -1,7 +1,7 @@
 import logging
 import os
 import json
-from constants import KEYWORDS, YEARS
+from .constants import KEYWORDS, YEARS
 
 # Configure logging to both a file and the console
 if not os.path.exists("./logs"):
