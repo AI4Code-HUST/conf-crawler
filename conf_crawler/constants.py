@@ -34,16 +34,9 @@ CONF_LISTS = [
 ]
 KEYWORDS = [
     [
-        "large language model",
-        "language model",
-        "llm",
-        "agent"
-    ],
-    [
-        "static analysis",
-        "static analyzer",
-        "static",
-        "codeql"
+        "vulnerability",
+        "exploit",
+        "generation"
     ]
 ]
-YEARS = ["2024", "2023"]
+YEARS = ["2024", "2023", "2022"]
