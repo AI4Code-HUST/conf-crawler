@@ -34,9 +34,10 @@ CONF_LISTS = [
 ]
 KEYWORDS = [
     [
-        "vulnerability",
-        "exploit",
-        "generation"
-    ]
+        "vulnerability exploit",
+    ],
+    [
+        "generation",
+    ],
 ]
 YEARS = ["2024", "2023", "2022"]
