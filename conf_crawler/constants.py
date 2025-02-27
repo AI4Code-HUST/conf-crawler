@@ -34,7 +34,8 @@ CONF_LISTS = [
 ]
 KEYWORDS = [
     [
-        "vulnerability exploit",
+        "vulnerability",
+        "exploit",
     ],
     [
         "generation",
